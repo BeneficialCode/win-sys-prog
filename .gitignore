@@ -1,0 +1,8 @@
+.vscode
+.vs
+.windows
+target
+*.lock
+*.user
+*.filters
+*.bin
