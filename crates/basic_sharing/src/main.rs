@@ -13,6 +13,8 @@ use windows::{
     Win32::{System::Memory::*},
 };
 
+use std::ffi::CString;
+
 
 pub fn show_dialog()-> MainDlg{
     MainDlg::default()
@@ -69,7 +71,6 @@ impl MainDlg{
                     }
                 }
                 UnmapViewOfFile(buffer);
-                CloseHandle(mem);
             });
 
             read.set_callback( move|_|{
@@ -86,10 +87,12 @@ impl MainDlg{
                 if buffer.is_null(){
                     panic!("failed to map memroy");
                 }else{
-                    frame.set_label("test!");
+                    let c_str = CString::from_raw(buffer as *mut i8);
+                    let rust_str = c_str.to_string_lossy().into_owned();
+                    frame.set_label(rust_str.as_str());
+                    std::mem::forget(c_str);
                 }
                 UnmapViewOfFile(buffer);
-                CloseHandle(mem);
             });
 
             Self{}
